@@ -4,49 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trainings-Planer</title>
-<style>
-  body {
-    font-family: sans-serif;
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: #f9f9f9;
-  }
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+    }
 
-  label {
-    display: block;
-    margin-top: 1rem;
-  }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
 
-  input, select, button {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.25rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    background-color: white;
-    color: #333;
-  }
+    input, select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      background-color: white;
+      color: #333;
+    }
 
-  input:focus, select:focus {
-    border-color: #007BFF;
-    outline: none;
-  }
+    input:focus, select:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
 
-  button {
-    margin-top: 1.5rem;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
+    button {
+      margin-top: 1.5rem;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
 
-  button:hover {
-    background-color: #0056b3;
-  }
-</style>
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #feedback {
+      margin-top: 1rem;
+      color: green;
+    }
+  </style>
 </head>
 <body>
   <h1>Trainingsdaten</h1>
@@ -64,7 +69,7 @@
       Ziel:
       <select id="ziel" required>
         <option value="">Bitte wählen</option>
-        <option>Beweglichkeit </option>
+        <option>Beweglichkeit</option>
         <option>Muskelaufbau</option>
         <option>Ausdauer</option>
       </select>
@@ -72,10 +77,10 @@
     <button type="submit">Absenden</button>
   </form>
 
-  <p id="feedback" style="margin-top: 1rem; color: green;"></p>
+  <p id="feedback"></p>
 
   <script>
-    // Daten aus LocalStorage laden
+    // Stammdaten laden
     const savedData = JSON.parse(localStorage.getItem("stammdaten"));
     if (savedData) {
       document.getElementById("name").value = savedData.name || "";
@@ -83,7 +88,7 @@
       document.getElementById("ziel").value = savedData.ziel || "";
     }
 
-    // Beim Absenden speichern + an Make senden
+    // Formular absenden
     document.getElementById("trainingForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -93,10 +98,10 @@
         ziel: document.getElementById("ziel").value.trim()
       };
 
-      // In LocalStorage speichern
+      // Stammdaten speichern
       localStorage.setItem("stammdaten", JSON.stringify(data));
 
-      // An Make-WebHook senden
+      // Daten an Make senden (DEINE URL hier eintragen!)
       fetch("https://hook.us1.make.com/DEIN_WEBHOOK_URL", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
