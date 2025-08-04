@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trainings-Planer</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
+    label { display: block; margin-top: 1rem; }
+    input, select, button { width: 100%; padding: 0.5rem; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Trainingsdaten</h1>
+
+  <form id="trainingForm">
+    <label>
+      Name:
+      <input type="text" id="name" required>
+    </label>
+    <label>
+      Alter:
+      <input type="number" id="alter" required>
+    </label>
+    <label>
+      Ziel:
+      <select id="ziel" required>
+        <option value="">Bitte wählen</option>
+        <option>Beweglichkeit</option>
+        <option>Muskelaufbau</option>
+        <option>Ausdauer</option>
+      </select>
+    </label>
+    <button type="submit">Absenden</button>
+  </form>
+
+  <p id="feedback" style="margin-top: 1rem; color: green;"></p>
+
+  <script>
+    // Daten aus LocalStorage laden
+    const savedData = JSON.parse(localStorage.getItem("stammdaten"));
+    if (savedData) {
+      document.getElementById("name").value = savedData.name || "";
+      document.getElementById("alter").value = savedData.alter || "";
+      document.getElementById("ziel").value = savedData.ziel || "";
+    }
+
+    // Beim Absenden speichern + an Make senden
+    document.getElementById("trainingForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById("name").value.trim(),
+        alter: document.getElementById("alter").value.trim(),
+        ziel: document.getElementById("ziel").value.trim()
+      };
+
+      // In LocalStorage speichern
+      localStorage.setItem("stammdaten", JSON.stringify(data));
+
+      // An Make-WebHook senden
+      fetch("https://hook.us1.make.com/DEIN_WEBHOOK_URL", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        document.getElementById("feedback").textContent = "Daten wurden gesendet!";
+      })
+      .catch(() => {
+        document.getElementById("feedback").textContent = "Fehler beim Senden.";
+      });
+    });
+  </script>
+</body>
+</html>
