@@ -64,7 +64,7 @@
       Ziel:
       <select id="ziel" required>
         <option value="">Bitte wählen</option>
-        <option>Beweglichkeit</option>
+        <option>Beweglichkeit </option>
         <option>Muskelaufbau</option>
         <option>Ausdauer</option>
       </select>
