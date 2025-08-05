@@ -1,0 +1,619 @@
+<!doctype html>
+
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Trainingsplan Eingabeformular</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background: #f2f2f2;
+      }
+      h2 {
+        background-color: #13488e;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .section {
+        background-color: #fff;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+      }
+      input[type="text"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      textarea {
+        resize: vertical;
+      }
+
+      .inline-checks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        margin-top: 0.5rem;
+      }
+      .inline-checks label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      button[type="submit"],
+      #copyBtn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        border-radius: 5px;
+        padding: 0.75rem 1.2rem;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        display: inline-block;
+      }
+      button[type="submit"]:hover,
+      #copyBtn:hover {
+        background: var(--accent-hover);
+      }
+      #pdfLink {
+        margin-top: 1rem;
+        display: none;
+        padding: 12px 20px;
+        background-color: var(--accent);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      #pdfLink:hover {
+        background-color: var(--accent-hover);
+      }
+      #copyBtn.copied {
+        background: #4caf50;
+      }
+      #statusMsg {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        color: #555;
+      }
+      #debugBox {
+        margin-top: 1.5rem;
+        font-family: monospace;
+        font-size: 0.8rem;
+        white-space: pre-wrap;
+        display: none;
+        border: 1px dashed #ccc;
+        padding: 1rem;
+        max-height: 300px;
+        overflow: auto;
+        background: #fafafa;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .button-row button,
+      .button-row a {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        border-radius: 5px;
+        padding: 0.75rem 1.2rem;
+        font-size: 1.05rem;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .button-row button:hover,
+      .button-row a:hover {
+        background: var(--accent-hover);
+      }
+
+      #copyBtn.copied {
+        background: #4caf50;
+      }
+
+      h1 {
+        font-size: 2rem; /* ca. 32px */
+        margin-bottom: 0.5rem;
+      }
+
+      .opt-hint {
+        font-size: 1rem; /* ~16px */
+        color: #666;
+      }
+
+      label {
+        font-size: 1.1rem; /* ~17.6px */
+        font-weight: 600;
+        margin-top: 1rem;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      select,
+      textarea {
+        font-size: 1.125rem; /* ~18px */
+        padding: 0.6rem;
+        margin-top: 0.3rem;
+      }
+
+      textarea {
+        min-height: 5rem;
+      }
+
+      .inline-checks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        margin-top: 0.5rem;
+        font-size: 1rem; /* ~16px, reduziert im Vergleich zu Labels */
+      }
+
+      .inline-checks label {
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .button-row button,
+      .button-row a {
+        font-size: 1.05rem;
+        padding: 0.75rem 1.2rem;
+      }
+
+      #statusMsg {
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
+      }
+
+      :root {
+        --accent: #007bff;
+        --accent-hover: #0056b3;
+        --danger: #c62828;
+        --bg-soft: #f4f4f4;
+      }
+
+      :root {
+        --accent: #007bff;
+        --accent-hover: #0056b3;
+        --danger: #c62828;
+        --bg-soft: #f4f4f4;
+      }
+
+      /* Neue Button-Farben */
+      .btn-primary {
+        background-color: #4caf50 !important; /* sattes Grün */
+        color: white !important;
+        font-size: 1.4rem !important; /* größere Schrift */
+        padding: 1rem 2rem !important; /* mehr Fläche */
+        border-radius: 8px !important; /* weichere Ecken */
+        font-weight: 700 !important;
+      }
+
+      .btn-primary:hover {
+        background-color: #3e8e41 !important; /* dunkleres Grün */
+      }
+
+      .btn-secondary {
+        background-color: #00bcd4 !important; /* Türkis/Hellblau */
+        color: white !important;
+        font-size: 1.4rem !important;
+        padding: 1rem 2rem !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+      }
+
+      .btn-secondary:hover {
+        background-color: #0097a7 !important; /* dunkleres Hellblau */
+      }
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .button-row button,
+      .button-row a,
+      button[type="submit"] {
+        background: var(--accent);
+        color: #fff !important;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        border-radius: 5px;
+        padding: 0.75rem 1.25rem;
+        font-size: 1.1rem;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .button-row button:hover,
+      .button-row a:hover,
+      button[type="submit"]:hover {
+        background: var(--accent-hover);
+      }
+
+      #copyBtn,
+      #pdfLink {
+        display: none;
+      }
+
+      #copyBtn.copied {
+        background: #4caf50 !important;
+      }
+
+      #statusMsg {
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
+        color: #555;
+      }
+
+      #debugBox {
+        margin-top: 1.5rem;
+        font-family: monospace;
+        font-size: 0.8rem;
+        white-space: pre-wrap;
+        display: none;
+        border: 1px dashed #ccc;
+        padding: 1rem;
+        max-height: 300px;
+        overflow: auto;
+        background: #fafafa;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 1.6rem;
+        }
+
+        .button-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .button-row button,
+        .button-row a,
+        button[type="submit"] {
+          width: 100%;
+          font-size: 1rem;
+          padding: 0.9rem;
+          text-align: center;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+          font-size: 1rem;
+          padding: 0.5rem;
+        }
+
+        label {
+          font-size: 1rem;
+        }
+
+        .inline-checks {
+          flex-direction: column;
+          font-size: 0.95rem;
+        }
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        font-size: 1.6rem;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Taggy MVP: Trainingsplan-Generator (V6)</h1>
+    <p class="opt-hint">Pflichtfelder sind markiert (*). Erweiterte Angaben verbessern die Qualität des Plans.</p>
+    <form id="trainingsForm">
+      <div class="section">
+        <h2>Basisdaten</h2>
+        <label for="user_id">Trainer-ID</label>
+        <input id="user_id" name="user_id" type="text" />
+        <label for="verein_id">Verein</label>
+        <input id="verein_id" name="verein_id" type="text" />
+        <label for="team_id">Team</label>
+        <input id="team_id" name="team_id" type="text" />
+        <label for="altersstufe">Alters-/Leistungsstufe</label>
+        <input id="altersstufe" name="altersstufe" type="text" />
+        <label for="spieleranzahl">Spieleranzahl im Kader einschliesslich Torspieler</label>
+        <input id="spieleranzahl" name="spieleranzahl" type="text" />
+        <label for="torhueter">Anzahl Torspieler im Kader</label>
+        <input id="torhueter" name="torhueter" type="text" />
+        <label for="einheiten_pro_woche">Einheiten pro Woche</label>
+        <input id="einheiten_pro_woche" name="einheiten_pro_woche" type="text" />
+        <label for="einheit_dauer">Dauer pro Einheit (Minuten)</label>
+        <input id="einheit_dauer" name="einheit_dauer" type="text" />
+        <label for="plan_typ">Trainingsplan-Typ</label>
+        <select id="plan_typ" name="plan_typ">
+          <option value="woche">Trainingswoche (3 Tage)</option>
+          <option value="tag">Ein Trainingstag</option>
+        </select>
+      </div>
+      <div class="section">
+        <h2>Ziele</h2>
+        <label for="saisonziel">Saisonziel</label>
+        <select id="saisonziel" name="saisonziel">
+          <option>Aufstieg / Meisterschaft</option>
+          <option>Obere Tabellenhälfte</option>
+          <option>Klassenerhalt / Entwicklung</option>
+          <option>Spielerentwicklung</option>
+          <option>Integration neuer Spieler / Teamfindung</option>
+          <option>Eigene Antwort</option>
+        </select>
+        <label for="spielidee">Spielidee</label>
+        <select id="spielidee" name="spielidee">
+          <option>Dominanz durch Ballbesitz</option>
+          <option>Dynamisches Umschalten</option>
+          <option>Kompaktheit und Effizienz</option>
+          <option>Variabel angepasst</option>
+          <option>Fokus auf Stabilität und Fehlervermeidung</option>
+          <option>Eigene Antwort</option>
+        </select>
+        <label for="match_formation">Wunschformation</label>
+        <select id="match_formation" name="match_formation">
+          <option>4-3-3</option>
+          <option>4-2-3-1</option>
+          <option>3-4-3</option>
+          <option>4-4-2</option>
+          <option>3-5-2</option>
+        </select>
+        <label for="entwicklungsschwerpunkte">Entwicklungsschwerpunkte</label>
+        <input id="entwicklungsschwerpunkte" name="entwicklungsschwerpunkte" type="text" />
+      </div>
+      <div class="section">
+        <h2>Trainingsphilosophie</h2>
+
+        <label for="philosophie">Trainingsphilosophie</label>
+        <select id="philosophie" name="philosophie">
+          <option>DFB: Trainingsphilosophie Deutschland - TPD</option>
+          <option>Horst Wein und Funino</option>
+          <option>Kick and Rush</option>
+          <option>Jamal, der Dribbler</option>
+          <option>Quälix - Muskelkater pur</option>
+          <option>Eigene Antwort: ... bitte in die Notizen eingeben</option>
+        </select>
+
+        <!-- SCHWACHSTELLEN-KASTEN -->
+
+        <label for="fokus"><strong>Fokus</strong></label>
+        <div
+          class="inline-checks"
+          style="border: 1px solid #ccc; padding: 1rem; border-radius: 6px; background: #f9f9f9; margin-bottom: 1rem">
+          <label><input name="fokus" type="checkbox" value="pressing-hoch" />Aggressives hohes Pressing</label>
+          <label><input name="fokus" type="checkbox" value="gegenpressing" />Gegenpressing nach Ballverlust</label>
+          <label
+            ><input name="fokus" type="checkbox" value="schnell-abschluss" />Schnelles Umschalten &amp; Abschluss</label
+          >
+          <label><input name="fokus" type="checkbox" value="intensiv-1v1" />Hohe Intensität 1v1 / Balljagd</label>
+          <label><input name="fokus" type="checkbox" value="anders" />Anderes (unten Notizen spezifizieren)</label>
+        </div>
+        <input
+          id="fokus"
+          name="fokus"
+          type="text"
+          placeholder="Optional: konkretes Ziel eintragen …"
+          style="margin-top: 0.5rem" />
+
+        <label for="schwachstellen"><strong>Schwachpunkte verbessern</strong></label>
+        <div
+          class="inline-checks"
+          style="border: 1px solid #ccc; padding: 1rem; border-radius: 6px; background: #f9f9f9; margin-bottom: 1rem">
+          <label><input name="schwachstellen" type="checkbox" value="fehlpaesse" />Fehlpässe &amp; Ballverluste</label>
+          <label><input name="schwachstellen" type="checkbox" value="abschluesse" />Torchancen &amp; Abschlüsse</label>
+          <label><input name="schwachstellen" type="checkbox" value="dribbling" />Dribbling und Ballbehandlung</label>
+          <label
+            ><input name="schwachstellen" type="checkbox" value="zweikampf" />Zweikampfverhalten &amp;
+            Durchsetzungsvermögen</label
+          >
+          <label><input name="schwachstellen" type="checkbox" value="bewegung" />Bewegung ohne Ball</label>
+          <label
+            ><input name="schwachstellen" type="checkbox" value="kompaktheit" />Kompaktheit &amp; Raumaufteilung</label
+          >
+          <label
+            ><input name="schwachstellen" type="checkbox" value="umschaltspiel" />Umschaltspiel (Offensiv &amp;
+            Defensiv)</label
+          >
+          <label
+            ><input name="schwachstellen" type="checkbox" value="kommunikation" />Kommunikation &amp;
+            Teamorganisation</label
+          >
+          <label
+            ><input name="schwachstellen" type="checkbox" value="ind_fehler" />Individuelle Fehler &amp;
+            Konzentration</label
+          >
+        </div>
+        <input
+          id="schwachstellen"
+          name="schwachstellen"
+          type="text"
+          placeholder="Optional: eigene Schwachstellen eintragen …"
+          style="margin-top: 0.5rem" />
+
+        <label for="ziel_konkret">Konkretisierung der Ziele</label>
+        <textarea id="ziel_konkret" name="ziel_konkret"></textarea>
+        <label for="platz_material">Platzverhältnisse / Material</label>
+        <textarea id="platz_material" name="platz_material"></textarea>
+      </div>
+      <div class="section">
+        <h2>Zusatznotizen</h2>
+        <textarea id="notizen" name="notizen" rows="5"></textarea>
+      </div>
+      <div id="output"></div>
+      <div class="button-row">
+        <a download="Trainingsplan.pdf" href="#" id="pdfLink" rel="noopener" target="_blank"
+          >📥 Trainingsplan herunterladen</a
+        ><button id="copyBtn" type="button">In Zwischenablage kopieren</button>
+      </div>
+      <div id="statusMsg"></div>
+      <div id="debugBox"></div>
+      <div style="margin-top: 2rem; text-align: center">
+        <button class="btn btn-primary" onclick="generateTrainingPlan()" type="button">Trainingsplan generieren</button>
+        <button class="btn btn-secondary" onclick="downloadInputs()" type="button">Eingaben herunterladen</button>
+      </div>
+    </form>
+    <iframe
+      id="pdfViewer"
+      title="Vorschau des generierten Trainingsplans"
+      style="display: none; margin-top: 2rem; height: 800px; width: 100%"></iframe>
+    <script>
+      const WEBHOOK_URL = "https://hook.eu2.make.com/dibhp1w2vq6bzg283jd2656k7dcwftd5"; // ggf. ersetzen
+      function downloadInputs() {
+        const form = document.querySelector("form");
+        const formData = new FormData(form);
+        const data = {};
+
+        for (const [key, value] of formData.entries()) {
+          if (data[key]) {
+            if (!Array.isArray(data[key])) data[key] = [data[key]];
+            data[key].push(value);
+          } else {
+            data[key] = value;
+          }
+        }
+
+        // Vorschau aktualisieren
+        updatePreview(data);
+
+        // Hilfsfunktion: Leerzeichen durch Bindestriche ersetzen
+        const clean = (s) => (s || "leer").trim().replace(/\s+/g, "-");
+
+        // Dynamische Dateibenennung
+        const userId = clean(data.user_id);
+        const altersstufe = clean(data.altersstufe);
+        const datum = new Date().toISOString().split("T")[0]; // z.B. 2025-07-28
+        const dateiname = `taggy_${userId}_${altersstufe}_${datum}.json`;
+
+        // JSON generieren und herunterladen
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = dateiname;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function updatePreview(data) {
+        const container = document.getElementById("previewContent");
+        let html = '<table style="width:100%; border-collapse: collapse; font-family: system-ui, sans-serif;">';
+        html +=
+          '<thead><tr><th style="text-align:left; border-bottom: 2px solid #ccc; padding: 8px;">Feld</th><th style="text-align:left; border-bottom: 2px solid #ccc; padding: 8px;">Wert</th></tr></thead><tbody>';
+        for (const key in data) {
+          const val = Array.isArray(data[key]) ? data[key].join(", ") : data[key];
+          html += `<tr><td style="padding: 8px;"><strong>${key}</strong></td><td style="padding: 8px;">${val}</td></tr>`;
+        }
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      }
+    </script>
+    <div
+      style="
+        margin: 2rem auto;
+        padding: 1rem;
+        text-align: center;
+        background: #f8f8f8;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      "></div>
+    <div
+      id="previewSection"
+      style="display: block; padding: 1rem; margin-top: 1rem; border: 1px solid #aaa; background: #f9f9f9">
+      <pre id="previewContent" style="white-space: pre-wrap">
+📄 Vorschau deiner Eingaben erscheint hier nach dem Klick auf 'Eingaben herunterladen'.</pre
+      >
+    </div>
+    <script>
+      function generateTrainingPlan() {
+        const form = document.querySelector("form");
+        const formData = new FormData(form);
+        const data = {};
+
+        for (const [key, value] of formData.entries()) {
+          if (data[key]) {
+            if (!Array.isArray(data[key])) data[key] = [data[key]];
+            data[key].push(value);
+          } else {
+            data[key] = value;
+          }
+        }
+
+        console.log("Sende Daten an:", WEBHOOK_URL);
+        console.log("Gesendete Daten:", data);
+
+        fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        })
+          .then(async (response) => {
+            const text = await response.text();
+            console.log("Rohantwort:", text);
+            if (!response.ok) throw new Error("HTTP " + response.status + ": " + text);
+            try {
+              return JSON.parse(text);
+            } catch (e) {
+              throw new Error("Antwort ist kein gültiges JSON:\n" + text);
+            }
+          })
+          .then((result) => {
+            console.log("Verarbeitetes Ergebnis:", result);
+            if (result && result.pdf_url) {
+              document.getElementById("pdfLink").href = result.pdf_url;
+              document.getElementById("pdfViewer").src = result.pdf_url;
+              document.getElementById("pdfViewer").style.display = "block";
+              document.getElementById("pdfLink").style.display = "inline-block";
+            } else {
+              alert("Kein Plan empfangen.");
+            }
+          })
+          .catch((error) => {
+            console.error("Fehler beim Senden:", error);
+            alert("Fehler beim Senden des Trainingsplans:\n" + error.message);
+          });
+      }
+    </script>
+  </body>
+</html>
